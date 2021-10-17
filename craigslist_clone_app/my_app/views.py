@@ -22,20 +22,24 @@ def new_search(request):
     soup = BeautifulSoup(data, features='html.parser')
 
     post_listings = soup.find_all('li', {'class': 'result-row'})
-    post_titles = post_listings[0].find(class_='result-title').text
-    post_url = post_listings[0].find('a').get('href')
-    post_price = post_listings[0].find(class_='result-price')
+
+    # post_titles = post_listings[0].find(class_='result-title').text
+    # post_url = post_listings[0].find('a').get('href')
+    # post_price = post_listings[0].find(class_='result-price')
+    # OPTIONAL PART FOR EMPTY PRICES----------------------------------
     # if post_price == None:
     #     post_price = 'Price Unspecified'
-    print(post_titles)
-    print(post_url)
-    print(post_price)
-    final_posting = []
+
+    final_postings = []
     for post in post_listings:
         post_titles = post.find(class_='result-title').text
         post_url = post.find('a').get('href')
-        post_price = post.find(class_='result-price')
+        if post.find(class_='result-price'):
+            post_price = post.find(class_='result-price')
+        else:
+            post_price = 'N/A'
+        final_postings.append((post_titles, post_url, post_price))
 
-    stuff_for_frontend = {'search': search, }
+    stuff_for_frontend = {'search': search, 'final_postings': final_postings}
     # print(data)
     return render(request, 'my_app/new_search.html', stuff_for_frontend)
