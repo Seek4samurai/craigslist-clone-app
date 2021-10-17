@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from . import models
 # Create your views here.
 
+# change REGION here------------------------------------
 BASE_CRAIGSLIST_URL = 'https://losangeles.craigslist.org/search/?query={}'
 BASE_IMAGE_URL = 'https://images.craigslist.org/{}_300x300.jpg'
 
@@ -41,13 +42,15 @@ def new_search(request):
             post_price = 'N/A'
 
         if post.find(class_='result-image',).get('data-ids'):
-            post_image_url = post.find(
+            post_image_id = post.find(
                 class_='result-image',).get('data-ids').split(',')[0].split(':')[1]
+            post_image_url = BASE_IMAGE_URL.format(post_image_id)
             print(post_image_url)
-            post_image_url = BASE_IMAGE_URL.format(post)
+        else:
+            'https://craigslist.org/images/peace.jpg'
 
-        final_postings.append((post_titles, post_url, post_price))
+        final_postings.append(
+            (post_titles, post_url, post_price, post_image_url))
 
     stuff_for_frontend = {'search': search, 'final_postings': final_postings}
-    # print(data)
     return render(request, 'my_app/new_search.html', stuff_for_frontend)
